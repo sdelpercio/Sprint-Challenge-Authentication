@@ -13,9 +13,7 @@ router.post('/register', (req, res) => {
 
 	User.insert(newUser)
 		.then(user => {
-			res
-				.status(201)
-				.json({ message: `Welcome, ${user.username}! Youre logged in now.` });
+			res.status(201).json(user);
 		})
 		.catch(err => {
 			res.status(500).json({ error: 'issue creating user', err });
