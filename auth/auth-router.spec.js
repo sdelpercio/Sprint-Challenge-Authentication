@@ -5,17 +5,10 @@ describe('authentication router', () => {
 	//
 	describe('POST /register', () => {
 		it('should return a 201 OK if valid user is created', () => {
-			var a = ['Small', 'Blue', 'Ugly'];
-			var b = ['Bear', 'Dog', 'Banana'];
-
-			var rA = Math.floor(Math.random() * a.length);
-			var rB = Math.floor(Math.random() * b.length);
-			var name = a[rA] + b[rB];
-
 			return request(server)
 				.post('/api/auth/register')
 				.send({
-					username: name,
+					username: Math.random(),
 					password: 'password'
 				})
 				.then(res => {
@@ -23,17 +16,10 @@ describe('authentication router', () => {
 				});
 		});
 		it('should respond with a json object', () => {
-			var a = ['Small', 'Blue', 'Ugly'];
-			var b = ['Bear', 'Dog', 'Banana'];
-
-			var rA = Math.floor(Math.random() * a.length);
-			var rB = Math.floor(Math.random() * b.length);
-			var name = a[rA] + b[rB];
-
 			return request(server)
 				.post('/api/auth/register')
 				.send({
-					username: name,
+					username: Math.random(),
 					password: 'password'
 				})
 				.then(res => {
@@ -43,6 +29,38 @@ describe('authentication router', () => {
 	});
 	//
 	describe('POST /login', () => {
-		it.todo('should return a 200 OK if user is logged in');
+		it('should return a 200 OK if user is logged in', () => {
+			return request(server)
+				.post('/api/auth/login')
+				.send({
+					username: 'becky',
+					password: 'becky'
+				})
+				.then(res => {
+					expect(res.status).toBe(200);
+				});
+		});
+		it('should return a logged in message in json', () => {
+			return request(server)
+				.post('/api/auth/login')
+				.send({
+					username: 'becky',
+					password: 'becky'
+				})
+				.then(res => {
+					expect(res.body.message).toBe('Logged in!');
+				});
+		});
+		it('should return an error message of invalid credentials with wrong password', () => {
+			return request(server)
+				.post('/api/auth/login')
+				.send({
+					username: 'becky',
+					password: 'beckyyyy'
+				})
+				.then(res => {
+					expect(res.body.message).toBe('Invalid credentials.');
+				});
+		});
 	});
 });
