@@ -23,8 +23,22 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', (req, res) => {
-	// implement login
-	const token = generateToken(user);
+	const { username, password } = req.body;
+
+	User.findBy({ username })
+		.first()
+		.then(user => {
+			if (user && bcrypt.compareSync(password, user.password)) {
+				const token = generateToken(user);
+
+				res.status(200).json({ message: 'Logged in!', token: token });
+			} else {
+				res.status(401).json({ message: 'Invalid credentials.' });
+			}
+		})
+		.catch(err => {
+			res.status(500).json({ error: 'issue logging in.', err });
+		});
 });
 
 function generateToken(user) {
