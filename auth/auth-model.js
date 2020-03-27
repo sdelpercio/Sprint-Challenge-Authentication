@@ -8,7 +8,7 @@ module.exports = {
 function insert(userInfo) {
 	return db('users')
 		.insert(userInfo)
-		.then(id => {
+		.then(([id]) => {
 			return findById(id);
 		});
 }

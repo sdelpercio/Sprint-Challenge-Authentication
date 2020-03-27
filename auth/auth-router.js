@@ -1,20 +1,21 @@
 const router = require('express').Router();
 const User = require('./auth-model');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const { jwtSecret } = require('../secrets/secrets.js');
 
 router.post('/register', (req, res) => {
 	const newUser = req.body;
 
+	const hash = bcrypt.hashSync(newUser.password, 8);
+
+	newUser.password = hash;
+
 	User.insert(newUser)
 		.then(user => {
-			if (user) {
-				const token = generateToken(user);
-
-				res.status(201).json({ message: 'Welcome!', token: token });
-			} else {
-				res.status(500).json({ error: 'error, no user' });
-			}
+			res
+				.status(201)
+				.json({ message: `Welcome, ${user.username}! Youre logged in now.` });
 		})
 		.catch(err => {
 			res.status(500).json({ error: 'issue creating user', err });
@@ -23,6 +24,7 @@ router.post('/register', (req, res) => {
 
 router.post('/login', (req, res) => {
 	// implement login
+	const token = generateToken(user);
 });
 
 function generateToken(user) {
